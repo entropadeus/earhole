@@ -1,10 +1,10 @@
-# Earhole 👂
+# Earworm 👂
 
 Stop typing. Start talking. Your computer transcribes it. That's it. Fully local, no cloud, no tracking.
 
 ## What is it?
 
-Earhole is a desktop app that listens to your microphone, figures out what the hell you just said, and automatically types it wherever you are. No cloud, no bullshit, no privacy-stealing. It runs 100% locally using OpenAI's **Whisper** model.
+Earworm is a desktop app that listens to your microphone, figures out what the hell you just said, and automatically types it wherever you are. No cloud, no bullshit, no privacy-stealing. It runs 100% locally using OpenAI's **Whisper** model.
 
 Use it when:
 - You wanna dictate instead of type (because who doesn't?)
@@ -36,7 +36,7 @@ Honest answer? My wrists were fucked from typing all day. Also, every voice-to-t
 - Only works with one specific app
 - Some combination of all three
 
-So I made Earhole. It:
+So I made Earworm. It:
 - **Stays local** — your voice never leaves your computer
 - **Actually works** — no lag, just press F9 and talk
 - **Works everywhere** — any app that takes text input
@@ -113,9 +113,9 @@ python main.py --model small --language en
 - `--no-notifications` — Shut up the notification popups
 
 ### Config file
-Earhole saves settings to:
-- **Windows**: `%APPDATA%\LocalSTT\config.json`
-- **macOS/Linux**: `~/.config/LocalSTT/config.json`
+Earworm saves settings to:
+- **Windows**: `%APPDATA%\Earworm\config.json`
+- **macOS/Linux**: `~/.config/Earworm/config.json`
 
 You can edit it directly if you want to tweak stuff:
 - `model_size` — Model size (default: base)
@@ -171,10 +171,10 @@ Don't use `large` on a potato computer. Use `base` or `tiny`. If you have a GPU,
 Want to bundle it into a `.exe` so you don't need Python installed?
 
 ```bash
-python build_exe.py
+python build.py
 ```
 
-Grabs everything, packages it up, puts the `.exe` in the `dist/` folder. No Python needed to run it after that.
+Grabs everything, packages it up, puts the `Earworm.exe` in the `dist/` folder. No Python needed to run it after that.
 
 ## Limitations
 

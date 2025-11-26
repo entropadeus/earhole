@@ -1,1 +1,1 @@
-# Local STT Application
+# Earworm - Speech-to-Text Application

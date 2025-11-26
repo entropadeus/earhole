@@ -33,7 +33,7 @@ class Config:
         if config_path is None:
             # Default to user's app data folder
             app_data = os.environ.get("APPDATA", os.path.expanduser("~"))
-            config_dir = Path(app_data) / "LocalSTT"
+            config_dir = Path(app_data) / "Earworm"
             try:
                 config_dir.mkdir(exist_ok=True)
             except OSError as e:
@@ -119,7 +119,7 @@ class STTApp:
 
         self.recorder.start()
         self.gui.set_state(StatusWindow.STATE_RECORDING)
-        self.gui.update_title("Earhole - Recording...")
+        self.gui.update_title("Earworm - Recording...")
         print("Recording started... (release F9 to stop)")
 
     def stop_recording(self) -> None:
@@ -131,7 +131,7 @@ class STTApp:
             self._processing = True
 
         self.gui.set_state(StatusWindow.STATE_PROCESSING)
-        self.gui.update_title("Earhole - Processing...")
+        self.gui.update_title("Earworm - Processing...")
         print("Recording stopped, processing...")
 
         # Process in background thread
@@ -202,7 +202,7 @@ class STTApp:
             with self._lock:
                 self._processing = False
             self.gui.set_state(StatusWindow.STATE_IDLE)
-            self.gui.update_title("Earhole - Ready")
+            self.gui.update_title("Earworm - Ready")
 
     def cancel_recording(self) -> None:
         """Cancel the current recording without processing."""
@@ -213,7 +213,7 @@ class STTApp:
             self._is_recording = False
             self.recorder.stop()  # Discard the audio
             self.gui.set_state(StatusWindow.STATE_IDLE)
-            self.gui.update_title("Earhole - Ready")
+            self.gui.update_title("Earworm - Ready")
 
             print("Recording cancelled")
 
@@ -223,13 +223,13 @@ class STTApp:
     def preload_model(self) -> None:
         """Pre-load the Whisper model (avoid delay on first use)."""
         print("Pre-loading Whisper model...")
-        self.gui.update_title("Earhole - Loading model...")
+        self.gui.update_title("Earworm - Loading model...")
 
         def load():
             try:
                 self.transcriber.load_model()
                 print("Model loaded successfully!")
-                self.gui.update_title("Earhole - Ready")
+                self.gui.update_title("Earworm - Ready")
                 if self.config.get("show_notifications"):
                     self.gui.notify(
                         "Ready",
@@ -247,7 +247,7 @@ class STTApp:
             return
 
         self._running = True
-        print("Starting Earhole...")
+        print("Starting Earworm...")
 
         # Start components
         self.gui.start()
@@ -256,7 +256,7 @@ class STTApp:
         # Pre-load the model in background
         self.preload_model()
 
-        print("Earhole is running!")
+        print("Earworm is running!")
         print("Hold F9 to record, release to transcribe")
 
     def stop(self) -> None:
@@ -264,7 +264,7 @@ class STTApp:
         if not self._running:
             return
 
-        print("Stopping Earhole...")
+        print("Stopping Earworm...")
         self._running = False
 
         # Stop components
@@ -274,7 +274,7 @@ class STTApp:
             self.recorder.stop()
 
         self.gui.stop()
-        print("Earhole stopped.")
+        print("Earworm stopped.")
 
     def run(self) -> None:
         """Run the application (blocking)."""
