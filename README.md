@@ -1,6 +1,6 @@
 # Earhole 👂
 
-Stop typing. Start talking. Your computer will figure it out. Fully local, zero bullshit, no cloud nonsense.
+Stop typing. Start talking. Your computer transcribes it. That's it. Fully local, no cloud, no tracking.
 
 ## What is it?
 
@@ -16,38 +16,34 @@ Use it when:
 
 ## How it works
 
-1. **Hold F9** on your keyboard to start recording
-2. **Speak clearly** into your microphone
-3. **Release F9** to stop recording and begin transcription
-4. **The text appears** automatically typed into your active window
+Press and hold **F9**, talk, release F9. Text shows up. Done.
 
-That's it. No account creation, no API keys, no internet connection required.
+More detailed:
+1. Hold F9
+2. Say what you want to type
+3. Release F9
+4. It transcribes and types it into whatever window you were just in
 
-### The flow:
-```
-Hold F9 → Record audio → Release F9 → Transcribe → Auto-type text
-```
+No account, no API keys, no internet required after you download the model once.
 
-The application runs in your system tray, staying out of your way until you need it.
+The app lives in your system tray. Open it with the icon, configure if you need to, then just use F9.
 
-## Why the fuck I built it
+## Why I built this
 
-Look, I was tired as hell of typing all day. My wrists were killing me, and I just wanted to fucking *talk* into my computer like a normal human instead of pecking away at the keyboard like a chicken.
+Honest answer? My wrists were fucked from typing all day. Also, every voice-to-text solution out there is either:
+- A privacy nightmare that sends your voice to some company
+- Slow as hell with annoying lag
+- Only works with one specific app
+- Some combination of all three
 
-The thing is, all the existing voice-to-text solutions either:
-- Steal your data and send it to some company's servers
-- Have annoying latency or require subscription bullshit
-- Only work with specific applications
-- Are unreliable garbage
+So I made Earhole. It:
+- **Stays local** — your voice never leaves your computer
+- **Actually works** — no lag, just press F9 and talk
+- **Works everywhere** — any app that takes text input
+- **Is simple** — because complicated software sucks
+- **Doesn't track you** — I don't have a backend to stick your data in
 
-So I built Earhole. It's:
-- **Offline** — your voice never leaves your machine
-- **Fast** — Whisper + faster-whisper = no bullshit delays
-- **Works everywhere** — types into any app that accepts text
-- **Dead simple** — hold F9, speak, done
-- **Respects your privacy** — everything stays local
-
-Basically, I wanted a tool that just *works* without asking permission, tracking me, or being a pain in the ass. Hence Earhole.
+Basically a tool that does one thing well instead of 10 things poorly.
 
 ## System Requirements
 
@@ -70,182 +66,156 @@ Basically, I wanted a tool that just *works* without asking permission, tracking
 - `medium`: ~1.5GB (high accuracy)
 - `large-v3`: ~2.9GB (best accuracy, slowest)
 
-## Installation
+## Getting started
 
-### 1. Clone the repository
+Clone it, set up a venv, install deps, run it.
+
 ```bash
-git clone https://github.com/yourusername/earhole.git
+git clone https://github.com/entropadeus/earhole.git
 cd earhole
-```
 
-### 2. Create a virtual environment
-```bash
-# Windows
+# Create virtual environment
 python -m venv venv
+
+# Activate it
+# Windows:
 venv\Scripts\activate
-
-# macOS/Linux
-python3 -m venv venv
+# macOS/Linux:
 source venv/bin/activate
-```
 
-### 3. Install dependencies
-```bash
+# Install everything
 pip install -r requirements.txt
+
+# Run
+python main.py
 ```
 
-For **GPU acceleration** (NVIDIA only):
+That's it. The app will load the Whisper model on first run (takes a minute or two depending on your hardware) then you're ready.
+
+If you've got an NVIDIA GPU and want to use it:
 ```bash
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 ```
 
-### 4. Run the application
+## Using it
+
+Just run `python main.py` and it starts. F9 to record, done.
+
+First time it runs, it'll download the Whisper model (couple minutes depending on your internet). After that it loads instantly.
+
+### Command line options if you need them
 ```bash
-python main.py
+python main.py --model small --language en
 ```
 
-## Usage
+- `--model` — Which Whisper model to use. Options: `tiny`, `base`, `small`, `medium`, `large-v2`, `large-v3`. Default is `base` which is a good middle ground.
+- `--language` — Language code like `en`, `es`, `fr`. Defaults to auto-detect which is fine.
+- `--no-notifications` — Shut up the notification popups
 
-### Basic usage
-```bash
-python main.py
-```
-This starts Earhole with default settings (base model, auto-detect language).
-
-### Command-line options
-```bash
-python main.py --model base --language en --no-notifications
-```
-
-**Available options:**
-- `--model {tiny,base,small,medium,large-v2,large-v3}` — Whisper model size (default: base)
-- `--language {en,es,fr,de,...}` — Language code (default: auto-detect)
-- `--no-notifications` — Disable desktop notifications
-
-### Keyboard shortcuts
-- **F9** — Hold to record, release to transcribe and type
-- **System tray icon** — Right-click for menu options
-
-### Configuration
-Settings are saved to:
+### Config file
+Earhole saves settings to:
 - **Windows**: `%APPDATA%\LocalSTT\config.json`
-- **macOS/Linux**: `~/.config/LocalSTT/config.json` (or `~/.LocalSTT/config.json`)
+- **macOS/Linux**: `~/.config/LocalSTT/config.json`
 
-You can manually edit this file to adjust:
-- `model_size` — Default Whisper model
-- `language` — Default language (null for auto-detect)
-- `typing_delay` — Delay between keystrokes in seconds
-- `use_clipboard` — Use clipboard paste for typing (faster, more reliable)
-- `show_notifications` — Desktop notifications
+You can edit it directly if you want to tweak stuff:
+- `model_size` — Model size (default: base)
+- `language` — Language code (null means auto-detect)
+- `typing_delay` — How fast to type (in seconds, default 0)
+- `use_clipboard` — Use clipboard to paste (default true, faster)
+- `show_notifications` — Show desktop notifications (default true)
 
-## Dependencies
+## What it uses
 
-- **faster-whisper** — Fast Whisper transcription engine
-- **sounddevice** — Microphone audio capture
-- **numpy** — Numerical operations
-- **pynput** — Keyboard hotkeys and text simulation
-- **pyperclip** — Clipboard management
-- **pystray** — System tray integration
-- **Pillow** — Image handling for tray icon
+All listed in `requirements.txt`:
+- **faster-whisper** — The speech recognition engine (fast version of Whisper)
+- **sounddevice** — Grabs audio from your mic
+- **numpy** — Math stuff
+- **pynput** — Keyboard hotkeys and keyboard simulation
+- **pyperclip** — Clipboard access (for pasting)
+- **pystray** — System tray icon
+- **Pillow** — Image handling
 
-See `requirements.txt` for version details.
+## If something breaks
 
-## Troubleshooting
+### Can't record audio
+Check that your microphone actually works. Go to system settings and make sure it's set as the default. If you're still stuck, run `python -c "from src.audio_recorder import AudioRecorder; AudioRecorder.list_devices()"` to see what devices you have.
 
-### "No audio recorded" error
-- Make sure your microphone isn't dead or muted
-- Check system settings and set your audio input as default
-- Try: `python -m src.audio_recorder` to list available devices
-- Make sure you're actually holding F9, genius
+Also make sure you're actually holding F9. Sometimes people just forget.
 
-### Transcription is slow
-- Smaller models (`tiny` or `base`) are faster, `large` is a fucking tank
-- Add a GPU if you've got one and want 3-5x speedup
-- The model pre-loads on startup, so first-use won't kill you
+### Recording is slow
+Smaller models are faster. If you're using `large-v3`, yeah it's gonna be slow. Switch to `base` and you'll be fine. GPU helps a lot if you have one.
 
-### Text isn't typing into my application
-- Some apps are locked down and won't accept keyboard simulation (banks, remote desktop, etc.)
-- Try `use_clipboard: false` in config if clipboard paste doesn't work
-- Security software sometimes blocks keyboard automation
-- Some old apps are just weird
+### Text won't type into my app
+Some apps are locked down and block keyboard simulation (banks, corporate stuff, remote desktop). Try setting `use_clipboard` to `false` in the config to type character by character instead of pasting.
 
-### "Model failed to load" error
-- Not enough disk space? You need at least 2GB free
-- Delete the model cache: `~/.cache/huggingface/hub/` (Linux/macOS) or `%USERPROFILE%\.cache\huggingface\hub\` (Windows)
-- Reinstall Whisper if you're desperate
+Some antivirus software also blocks this, so if that's you, you'll need to whitelist the app.
 
-### High CPU/RAM usage
-- Bigger models = more power. `large` is going to tank old machines
-- Downgrade to `base` or `small` if your computer is struggling
-- Close your 47 browser tabs and try again
+### Model won't load
+You probably don't have enough disk space. The models take 500MB to 3GB depending on which one you use. Delete the cache if you need space: `~/.cache/huggingface/hub/` on Linux/Mac or `%USERPROFILE%\.cache\huggingface\hub\` on Windows.
 
-## Performance Tips
+### Machine is dying under load
+Don't use `large` on a potato computer. Use `base` or `tiny`. If you have a GPU, use that. If you don't, close some stuff and try again.
 
-1. **Pre-load the model on startup** — First transcription takes 5-30 seconds while the model loads. Earhole does this automatically, so you're ready to go.
+## Making it faster
 
-2. **Use clipboard mode** (enabled by default) — Way faster than typing character-by-character. Only disable it if an app is weird about clipboard paste.
+**Pick the right model for your machine.** `base` is good. `tiny` is faster but less accurate. `large` is super accurate but slow. If you have a GPU, use it.
 
-3. **Choose a model that matches your hardware**:
-   - **Potato CPU**: `tiny` (small and fast, accuracy is... okay)
-   - **Normal CPU**: `base` (sweet spot, accurate enough)
-   - **Good CPU or GPU**: `small` or `medium` (very accurate)
-   - **Gaming rig with GPU**: Go wild with `large-v3` for perfect transcription
+**Use clipboard paste** (it's on by default). It's way faster than typing character by character. Only turn it off if some weird app doesn't like clipboard.
 
-4. **Set your language** — Skipping auto-detect speeds things up a bit and improves accuracy if you always speak the same language.
+**Set a language** if you always speak the same one. Auto-detect works but locked languages are a bit faster.
 
-## Building a Standalone Executable
+**The model pre-loads when you start the app** so you don't hit a 30-second delay on first use. Nice.
 
-You can package Earhole into a standalone `.exe` for Windows:
+## Building a standalone executable
+
+Want to bundle it into a `.exe` so you don't need Python installed?
 
 ```bash
 python build_exe.py
 ```
 
-The executable will be in the `dist/` folder. No Python installation needed to run it.
+Grabs everything, packages it up, puts the `.exe` in the `dist/` folder. No Python needed to run it after that.
 
-## Known Limitations
+## Limitations
 
-- **Push-to-talk only** — You gotta hold F9 while you speak. No "always listening" mode (which is probably better for your privacy anyway).
-- **Local machine only** — Runs on the machine you're using. Can't pipe audio from your weird cousin's setup remotely.
-- **English is its jam** — Whisper knows 99 languages but is best with English. Other languages work fine, just expect some quirks.
-- **Special characters are weird** — Emojis and fancy unicode stuff might not type correctly into some apps. It's a Windows/Linux/Mac thing.
+- **Push-to-talk only** — You hold F9 to record. No "always listening" background mode. This is intentional for privacy and to avoid accidental transcriptions.
+- **Local only** — Runs on the machine you're using. Can't send audio to another computer.
+- **English works best** — Whisper is trained mostly on English. Other languages work but aren't as good.
+- **Some apps block it** — Anything with locked-down input (banks, corporate security, remote desktop) won't let you use keyboard simulation. Deal with it.
 
 ## Contributing
 
-Found a bug? Have a feature request? Feel free to open an issue or pull request.
+Found a bug? Have an idea? Open an issue or PR.
 
 ## License
 
-MIT License — use it, modify it, share it freely.
+MIT. Do whatever you want with it.
 
-## Acknowledgments
+## Thanks to
 
-- [OpenAI Whisper](https://github.com/openai/whisper) — The amazing speech recognition model
-- [faster-whisper](https://github.com/guillaumekln/faster-whisper) — High-performance Whisper implementation
-- [pynput](https://github.com/moses-palmer/pynput) — Cross-platform keyboard/mouse control
+- [OpenAI Whisper](https://github.com/openai/whisper) — Makes the transcription magic happen
+- [faster-whisper](https://github.com/guillaumekln/faster-whisper) — Makes it actually usable
+- [pynput](https://github.com/moses-palmer/pynput) — Handles the keyboard stuff
 
 ## FAQ
 
-**Q: Is my voice being recorded and sent to some server?**
-A: Hell no. Everything stays on your machine. No internet after the model downloads. Your voice is yours.
+**My voice is being recorded and sold, right?**
+Nope. It's local only. Everything stays on your computer. No servers, no tracking, no bullshit. That's the whole point.
 
-**Q: What languages does this thing support?**
-A: 99 languages. By default it figures out what language you're speaking. You can lock it to a specific language in settings if you want.
+**What languages does it work with?**
+99 languages. It auto-detects by default. If you always speak one language, you can lock it in the settings.
 
-**Q: Works on Mac?**
-A: Yep, it's cross-platform. F9 might be different on Mac depending on your keyboard, but it works.
+**Does it work on Mac?**
+Yep, Linux and Mac too. F9 might not work on Mac keyboards, but you can remap it if you want. Functionality is the same.
 
-**Q: How good is the transcription?**
-A: Scary good if you speak clearly. Quality depends on:
-- Your microphone (don't whisper into a potato)
-- Background noise (quiet is better)
-- Which model you use (`tiny` is okay, `large` is creepy accurate)
+**How accurate is the transcription?**
+Pretty damn good if you speak clearly. Better with good audio. The bigger models (`medium`, `large`) are scary accurate. Smaller ones are fine but make more mistakes.
 
-**Q: Can I toggle recording instead of holding F9?**
-A: Nope. Push-to-talk only. This is intentional—it keeps things simple and makes sure you know when you're recording.
+**Can I toggle recording instead of holding F9?**
+No. Push-to-talk only. That's intentional—it's simpler and you always know when you're recording.
 
-**Q: Does this work with literally every app?**
-A: Most of them, yeah. Some are locked down tight (banking sites, remote desktop) and won't accept keyboard simulation. Those are the annoying ones.
+**Will this work with my app?**
+Probably. Works with anything that takes text input. Doesn't work with locked-down security stuff like banking sites or corporate remote desktops. Those apps actively block keyboard simulation.
 
 ---
 
