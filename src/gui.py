@@ -9,8 +9,6 @@ import threading
 import math
 import time
 from typing import Callable, Optional, List, Tuple
-from dataclasses import dataclass
-from enum import Enum
 from PIL import Image, ImageDraw, ImageTk, ImageFilter
 
 
@@ -105,35 +103,43 @@ def create_ear_icon(size: int = 32, color: str = "#4CAF50") -> Image.Image:
 # Animation System
 # =============================================================================
 
-@dataclass
 class AnimatedValue:
-    """Represents a value that animates smoothly between targets."""
-    current: float
-    target: float
-    velocity: float = 0.0
+    """
+    Represents a value that animates smoothly between targets.
+    Thread-safe for cross-thread target updates.
+    """
+
+    def __init__(self, current: float, target: float, velocity: float = 0.0):
+        self.current = current
+        self.target = target
+        self.velocity = velocity
+        self._lock = threading.Lock()
 
     def update(self, damping: float = 0.15, speed: float = 0.3) -> bool:
         """Update using spring physics. Returns True if still animating."""
-        diff = self.target - self.current
-        self.velocity = self.velocity * (1 - damping) + diff * speed
-        self.current += self.velocity
+        with self._lock:
+            diff = self.target - self.current
+            self.velocity = self.velocity * (1 - damping) + diff * speed
+            self.current += self.velocity
 
-        # Check if settled
-        if abs(diff) < 0.001 and abs(self.velocity) < 0.001:
-            self.current = self.target
-            self.velocity = 0
-            return False
-        return True
+            # Check if settled
+            if abs(diff) < 0.001 and abs(self.velocity) < 0.001:
+                self.current = self.target
+                self.velocity = 0
+                return False
+            return True
 
     def set_target(self, target: float) -> None:
-        """Set new target value."""
-        self.target = target
+        """Set new target value (thread-safe)."""
+        with self._lock:
+            self.target = target
 
     def set_immediate(self, value: float) -> None:
-        """Set value immediately without animation."""
-        self.current = value
-        self.target = value
-        self.velocity = 0
+        """Set value immediately without animation (thread-safe)."""
+        with self._lock:
+            self.current = value
+            self.target = value
+            self.velocity = 0
 
 
 class AnimatedColor:
